@@ -11,8 +11,8 @@
 /**
  * Класс для работы с API
  *
- * @author		User Name
- * @version		v.1.0 (dd/mm/yyyy)
+ * @author		Jaguellz
+ * @version		v.1.0 (14/01/2022)
  */
 class Api
 {
@@ -23,20 +23,24 @@ class Api
 
 
 	/**
-	 * Заполняет строковый шаблон template данными из объекта object
+	 * Заполняет строковый шаблон template данными из массива array
 	 *
-	 * @author		User Name
-	 * @version		v.1.0 (dd/mm/yyyy)
+	 * @author		Jaguellz
+	 * @version		v.1.0 (14/01/2022)
 	 * @param		array $array
 	 * @param		string $template
 	 * @return		string
 	 */
 	public function get_api_path(array $array, string $template) : string
 	{
-		$result = '';
-
-		/* Здесь ваш код */
-
+        $indexes = [];
+        $replacement = [];
+        preg_match_all('/%\w*%/', $template, $indexes);
+        foreach ($indexes[0] as $index)
+        {
+            array_push($replacement, $array[explode('%', $index)[1]]);
+        }
+        $result = str_replace($indexes[0], $replacement, $template);
 		return $result;
 	}
 }
@@ -63,6 +67,6 @@ $api_paths = array_map(function ($api_path_template) use ($api, $user)
 	return $api->get_api_path($user, $api_path_template);
 }, $api_path_templates);
 
-echo json_encode($api_paths, JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE););
+echo json_encode($api_paths, JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
 
 $expected_result = ['/api/items/20/John%20Dow','/api/items/20/QA','/api/items/20/100'];
